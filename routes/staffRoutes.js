@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 // Define routes for the "staff" resource
-router.get("/", (req, res) => {
+router.get("/staff", (req, res) => {
 	res.send("List of staff members");
 });
 
@@ -12,7 +12,7 @@ router.get("/:staffId", (req, res) => {
 	res.send(`Details of staff member ${staffId}`);
 });
 
-router.post("/", (req, res) => {
+router.post("/add", (req, res) => {
 	// Handle creating a new staff member
 	res.send("Create a new staff member");
 });

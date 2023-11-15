@@ -1,20 +1,34 @@
 // routes/residentRoutes.js
 const express = require("express");
 const router = express.Router();
+const logger = require("../lib/logger");
+
+const mockResidentsData = require("../mock-data/residentsMockData.json");
 
 // Define routes for the "resident" resource
-router.get("/", (req, res) => {
-	res.send("List of residents");
+router.get("/residents", (req, res) => {
+	res.send(mockResidentsData);
 });
 
 router.get("/:residentId", (req, res) => {
 	const residentId = req.params.residentId;
-	res.send(`Details of resident ${residentId}`);
+
+	const mockResidentData = {
+		firstName: "Pieter",
+		lastName: "Delbecke",
+		residentId: residentId,
+	};
+
+	res.send(mockResidentData);
 });
 
-router.post("/", (req, res) => {
-	// Handle creating a new resident
-	res.send("Create a new resident");
+router.post("/add", (req, res) => {
+	console.log("req.body", req.body);
+	const newResident = req.body;
+	//
+	logger.info(`Added new resident: ${newResident.firstName} ${newResident.lastName}`);
+	// logger.error(`error new resident: ${newResident.firstName} ${newResident.lastName}`);
+	res.send(newResident);
 });
 
 router.put("/:residentId", (req, res) => {
