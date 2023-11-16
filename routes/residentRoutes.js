@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const { Resident, ResidentLanguage } = require("../models");
+const { Resident, ResidentLanguage, ResidentNationality, ResidentReligion } = require("../models");
 
 const mockResidentsData = require("../mock-data/residentsMockData.json");
 
@@ -53,15 +53,19 @@ router.post("/add", async (req, res) => {
 		const bulkNationalities = nationalities.map((nationality) => {
 			return { residentId, nationality };
 		});
-		const bulkRelegions = religions.map((relegion) => {
-			return { residentId, relegion };
+		const bulkReligions = religions.map((religion) => {
+			return { residentId, religion };
 		});
 
+		// console.log("### bulkNationalities", bulkNationalities);
+		console.log("### bulkRelegions", bulkReligions);
+
 		const residentLangagues = await ResidentLanguage.bulkCreate(bulkLanguages);
+		const residentNationalities = await ResidentNationality.bulkCreate(bulkNationalities);
+		const residentReligions = await ResidentReligion.bulkCreate(bulkReligions);
 
-		// const residentNationalities = await
-
-		res.json({ ...resident, ...residentLangagues });
+		res.json(resident);
+		// res.json({ ...resident, ...residentLangagues, ...residentNationalities, ...residentReligions, id: residentId });
 		logger.info(`added new Resident: ${firstName} ${lastName} - residentId: ${resident.dataValues.id}`);
 	} catch (error) {
 		logger.error("resident/add:", error);
