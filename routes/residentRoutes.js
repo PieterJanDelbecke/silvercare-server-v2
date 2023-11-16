@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const { Resident } = require("../models");
+const { Resident, ResidentLanguage } = require("../models");
 
 const mockResidentsData = require("../mock-data/residentsMockData.json");
 
@@ -25,7 +25,7 @@ router.get("/:residentId", (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
-	console.log("req.body", req.body);
+	console.log("### req.body", req.body);
 	const {
 		firstName,
 		lastName,
@@ -39,18 +39,34 @@ router.post("/add", async (req, res) => {
 	} = req.body;
 
 	try {
-		const result = await Resident.create({
+		const resident = await Resident.create({
 			firstName,
 			lastName,
 			dob,
 			gender,
 		});
-		res.json(result);
-		logger.info(`added new Resident: ${firstName} ${lastName} - residentId: ${result.dataValues.id}`);
+
+		const residentId = resident.dataValues.id;
+		const bulkLanguages = languages.map((language) => {
+			return { residentId, language };
+		});
+		const bulkNationalities = nationalities.map((nationality) => {
+			return { residentId, nationality };
+		});
+		const bulkRelegions = religions.map((relegion) => {
+			return { residentId, relegion };
+		});
+
+		const residentLangagues = await ResidentLanguage.bulkCreate(bulkLanguages);
+
+		// const residentNationalities = await
+
+		res.json({ ...resident, ...residentLangagues });
+		logger.info(`added new Resident: ${firstName} ${lastName} - residentId: ${resident.dataValues.id}`);
 	} catch (error) {
 		logger.error("resident/add:", error);
+		res.send("ERROR: resident/add");
 	}
-	res.end();
 });
 
 router.put("/:residentId", (req, res) => {
