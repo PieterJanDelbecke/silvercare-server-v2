@@ -20,6 +20,9 @@ module.exports = (sequelize, DataTypes) => {
 			Resident.hasMany(models.ResidentActivity, {
 				foreignKey: "residentId",
 			});
+			Resident.hasMany(models.ResidentInfo, {
+				foreignKey: "residentId",
+			});
 		}
 	}
 	Resident.init(

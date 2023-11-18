@@ -3,7 +3,14 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const { Resident, ResidentLanguage, ResidentNationality, ResidentReligion, ResidentActivity } = require("../models");
+const {
+	Resident,
+	ResidentLanguage,
+	ResidentNationality,
+	ResidentReligion,
+	ResidentActivity,
+	ResidentInfo,
+} = require("../models");
 
 const mockResidentsData = require("../mock-data/residentsMockData.json");
 
@@ -60,8 +67,7 @@ router.post("/add", async (req, res) => {
 			return { residentId, activity };
 		});
 
-		console.log("### bulkAcivityOptions", bulkAcivityOptions);
-
+		const residentInfo = await ResidentInfo.create({ residentId, practicingReligion });
 		const residentLangagues = await ResidentLanguage.bulkCreate(bulkLanguages);
 		const residentNationalities = await ResidentNationality.bulkCreate(bulkNationalities);
 		const residentReligions = await ResidentReligion.bulkCreate(bulkReligions);
