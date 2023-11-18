@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const { Resident, ResidentLanguage, ResidentNationality, ResidentReligion } = require("../models");
+const { Resident, ResidentLanguage, ResidentNationality, ResidentReligion, ResidentActivity } = require("../models");
 
 const mockResidentsData = require("../mock-data/residentsMockData.json");
 
@@ -56,13 +56,16 @@ router.post("/add", async (req, res) => {
 		const bulkReligions = religions.map((religion) => {
 			return { residentId, religion };
 		});
+		const bulkAcivityOptions = activitiesOptions.map((activity) => {
+			return { residentId, activity };
+		});
 
-		// console.log("### bulkNationalities", bulkNationalities);
-		console.log("### bulkRelegions", bulkReligions);
+		console.log("### bulkAcivityOptions", bulkAcivityOptions);
 
 		const residentLangagues = await ResidentLanguage.bulkCreate(bulkLanguages);
 		const residentNationalities = await ResidentNationality.bulkCreate(bulkNationalities);
 		const residentReligions = await ResidentReligion.bulkCreate(bulkReligions);
+		const residentActivities = await ResidentActivity.bulkCreate(bulkAcivityOptions);
 
 		res.json(resident);
 		// res.json({ ...resident, ...residentLangagues, ...residentNationalities, ...residentReligions, id: residentId });
