@@ -11,12 +11,16 @@ module.exports = (sequelize, DataTypes) => {
 			ResidentInfo.belongsTo(models.Resident, {
 				foreignKey: "residentId",
 			});
+			ResidentInfo.belongsTo(models.Info, {
+				foreignKey: "infoId",
+			});
 		}
 	}
 	ResidentInfo.init(
 		{
 			residentId: DataTypes.UUID,
-			practicingReligion: DataTypes.BOOLEAN,
+			infoId: DataTypes.INTEGER,
+			info: DataTypes.STRING,
 		},
 		{
 			sequelize,

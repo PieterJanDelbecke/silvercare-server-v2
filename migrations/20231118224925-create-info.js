@@ -2,17 +2,13 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
 	async up(queryInterface, Sequelize) {
-		await queryInterface.createTable("ResidentLanguages", {
+		await queryInterface.createTable("Infos", {
 			id: {
-				primaryKey: true,
-				defaultValue: Sequelize.literal("uuid_generate_v4()"),
-				type: Sequelize.UUID,
-			},
-			residentId: {
 				allowNull: false,
-				type: Sequelize.UUID,
+				primaryKey: true,
+				type: Sequelize.INTEGER,
 			},
-			language: {
+			info: {
 				allowNull: false,
 				type: Sequelize.STRING,
 			},
@@ -27,6 +23,6 @@ module.exports = {
 		});
 	},
 	async down(queryInterface, Sequelize) {
-		await queryInterface.dropTable("ResidentLanguages");
+		await queryInterface.dropTable("Infos");
 	},
 };
