@@ -44,6 +44,7 @@ router.post("/add", async (req, res) => {
 			lastName,
 			dob,
 			gender,
+			practicingReligion,
 		});
 		const residentId = resident.dataValues.id;
 
