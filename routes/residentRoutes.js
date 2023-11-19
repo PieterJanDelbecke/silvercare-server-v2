@@ -25,7 +25,7 @@ router.get("/:residentId", (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
-	console.log("### req.body", req.body);
+	// console.log("### req.body", req.body);
 	const {
 		firstName,
 		lastName,
@@ -45,8 +45,8 @@ router.post("/add", async (req, res) => {
 			dob,
 			gender,
 		});
-
 		const residentId = resident.dataValues.id;
+
 		const bulkNationalities = nationalities.map((nationality) => {
 			return { residentId, infoId: 1, info: nationality };
 		});
