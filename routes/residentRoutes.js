@@ -3,14 +3,7 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const {
-	Resident,
-	ResidentLanguage,
-	ResidentNationality,
-	ResidentReligion,
-	ResidentActivity,
-	ResidentInfo,
-} = require("../models");
+const { Resident, ResidentInfo } = require("../models");
 
 const mockResidentsData = require("../mock-data/residentsMockData.json");
 
@@ -54,27 +47,24 @@ router.post("/add", async (req, res) => {
 		});
 
 		const residentId = resident.dataValues.id;
-		const bulkLanguages = languages.map((language) => {
-			return { residentId, language };
-		});
 		const bulkNationalities = nationalities.map((nationality) => {
-			return { residentId, nationality };
+			return { residentId, infoId: 1, info: nationality };
+		});
+		const bulkLanguages = languages.map((language) => {
+			return { residentId, infoId: 2, info: language };
 		});
 		const bulkReligions = religions.map((religion) => {
-			return { residentId, religion };
+			return { residentId, infoId: 3, info: religion };
 		});
 		const bulkAcivityOptions = activitiesOptions.map((activity) => {
-			return { residentId, activity };
+			return { residentId, infoId: 4, info: activity };
 		});
 
-		const residentInfo = await ResidentInfo.create({ residentId, practicingReligion });
-		const residentLangagues = await ResidentLanguage.bulkCreate(bulkLanguages);
-		const residentNationalities = await ResidentNationality.bulkCreate(bulkNationalities);
-		const residentReligions = await ResidentReligion.bulkCreate(bulkReligions);
-		const residentActivities = await ResidentActivity.bulkCreate(bulkAcivityOptions);
+		const info = [...bulkNationalities, ...bulkLanguages, ...bulkReligions, ...bulkAcivityOptions];
+
+		const insertedInfo = await ResidentInfo.bulkCreate(info);
 
 		res.json(resident);
-		// res.json({ ...resident, ...residentLangagues, ...residentNationalities, ...residentReligions, id: residentId });
 		logger.info(`added new Resident: ${firstName} ${lastName} - residentId: ${resident.dataValues.id}`);
 	} catch (error) {
 		logger.error("resident/add:", error);
