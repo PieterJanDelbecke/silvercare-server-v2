@@ -9,22 +9,32 @@ const mockResidentsData = require("../mock-data/residentsMockData.json");
 
 // Define routes for the "resident" resource
 router.get("/residents", async (req, res) => {
-	const residents = await Resident.findAll({
-		attributes: ["id", "firstName", "lastName", "dob", "gender"],
-	});
-	res.json(residents);
+	try {
+		const residents = await Resident.findAll({
+			attributes: ["id", "firstName", "lastName", "dob", "gender"],
+		});
+		res.json(residents);
+	} catch (error) {
+		logger.error("resident/residents:", error);
+		res.send("ERROR: resident/residents");
+	}
 });
 
-router.get("/:residentId", (req, res) => {
+router.get("/:residentId", async (req, res) => {
 	const residentId = req.params.residentId;
 
-	const mockResidentData = {
-		firstName: "Pieter",
-		lastName: "Delbecke",
-		residentId: residentId,
-	};
-
-	res.send(mockResidentData);
+	try {
+		const residentInfo = await ResidentInfo.findAll({
+			where: {
+				residentId,
+			},
+		});
+		logger.info(`GET resident: ${residentId}`);
+		res.json(residentInfo);
+	} catch (error) {
+		logger.error("resident/residents:", error);
+		res.send("ERROR: resident/residents");
+	}
 });
 
 router.post("/add", async (req, res) => {
@@ -69,7 +79,7 @@ router.post("/add", async (req, res) => {
 		const insertedInfo = await ResidentInfo.bulkCreate(info);
 
 		res.json(resident);
-		logger.info(`added new Resident: ${firstName} ${lastName} - residentId: ${resident.dataValues.id}`);
+		logger.info(`PUT new Resident: ${firstName} ${lastName} - residentId: ${resident.dataValues.id}`);
 	} catch (error) {
 		logger.error("resident/add:", error);
 		res.send("ERROR: resident/add");
