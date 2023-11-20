@@ -8,8 +8,11 @@ const { Resident, ResidentInfo } = require("../models");
 const mockResidentsData = require("../mock-data/residentsMockData.json");
 
 // Define routes for the "resident" resource
-router.get("/residents", (req, res) => {
-	res.send(mockResidentsData);
+router.get("/residents", async (req, res) => {
+	const residents = await Resident.findAll({
+		attributes: ["id", "firstName", "lastName", "dob", "gender"],
+	});
+	res.json(residents);
 });
 
 router.get("/:residentId", (req, res) => {
