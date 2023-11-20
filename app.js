@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+require("./env.js");
 
 const residentRoutes = require("./routes/residentRoutes");
 const staffRoutes = require("./routes/staffRoutes");
