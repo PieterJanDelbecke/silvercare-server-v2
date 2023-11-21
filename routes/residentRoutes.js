@@ -4,6 +4,7 @@ const router = express.Router();
 const logger = require("../lib/logger");
 
 const { Resident, ResidentInfo } = require("../models");
+const { residentData } = require("../lib/helpers.js");
 
 const mockResidentsData = require("../mock-data/residentsMockData.json");
 
@@ -29,8 +30,9 @@ router.get("/:residentId", async (req, res) => {
 				residentId,
 			},
 		});
-		logger.info(`GET resident: ${residentId}`);
-		res.json(residentInfo);
+		const info = residentData(residentInfo);
+		logger.info(`GET residentInfo of resident: ${residentId}`);
+		res.json(info);
 	} catch (error) {
 		logger.error("resident/residents:", error);
 		res.send("ERROR: resident/residents");
