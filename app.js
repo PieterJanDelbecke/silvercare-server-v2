@@ -1,12 +1,13 @@
 const express = require("express");
 const cors = require("cors");
-require("dotenv").config();
+require("./env.js");
 
 const residentRoutes = require("./routes/residentRoutes");
 const staffRoutes = require("./routes/staffRoutes");
 
 const app = express();
-const PORT = 4000;
+const PORT = process.env.HTTP_PORT;
+const API_URL = process.env.API_URL;
 
 // Use CORS middleware
 app.use(cors());
@@ -17,12 +18,9 @@ app.use(express.json());
 // Parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
-// Use resident routes
 app.use("/resident", residentRoutes);
-
-// Use staff routes
 app.use("/staff", staffRoutes);
 
 app.listen(PORT, () => {
-	console.log(`Server is running on http://localhost:${PORT}`);
+	console.log(`Server is running on ${API_URL}`);
 });
