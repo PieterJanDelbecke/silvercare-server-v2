@@ -10,9 +10,13 @@ module.exports = (sequelize, DataTypes) => {
 		static associate(models) {
 			ResidentInfo.belongsTo(models.Resident, {
 				foreignKey: "residentId",
+				onDelete: "CASCADE",
+				onUpdate: "CASCADE",
 			});
 			ResidentInfo.belongsTo(models.Info, {
 				foreignKey: "infoId",
+				onDelete: "CASCADE",
+				onUpdate: "CASCADE",
 			});
 		}
 	}

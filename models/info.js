@@ -10,6 +10,8 @@ module.exports = (sequelize, DataTypes) => {
 		static associate(models) {
 			Info.hasMany(models.ResidentInfo, {
 				foreignKey: "residentId",
+				onDelete: "CASCADE",
+				onUpdate: "CASCADE",
 			});
 		}
 	}
