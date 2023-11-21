@@ -1,4 +1,3 @@
-// routes/residentRoutes.js
 const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
@@ -6,9 +5,6 @@ const logger = require("../lib/logger");
 const { Resident, ResidentInfo } = require("../models");
 const { residentData } = require("../lib/helpers.js");
 
-const mockResidentsData = require("../mock-data/residentsMockData.json");
-
-// Define routes for the "resident" resource
 router.get("/residents", async (req, res) => {
 	try {
 		const residents = await Resident.findAll({
