@@ -9,13 +9,13 @@ module.exports = {
 		const createdAt = new Date();
 		const updatedAt = new Date();
 		const uuidResidents = [];
-		for (let i = 0; i < 25; i++) {
+		for (let i = 0; i < 15; i++) {
 			uuidResidents.push(uuidv4());
 		}
 		const nationalities = ["Australia", "Italy", "Greece", "New Zealand"];
 		const languages = ["English", "Italian", "Greek", "English"];
 		const religions = ["Christian", "Jewish", "Buddhist", "Muslim", "Hindu", "Atheist"];
-		const activities = ["Bingo", "Bustrips", "Music", "Gardening"];
+		const activities = ["bingo", "bustrips", "music", "gardening"];
 		const practicing = [true, false];
 
 		const residents = uuidResidents.map((uuid, index) => {
