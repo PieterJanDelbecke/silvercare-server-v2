@@ -15,7 +15,7 @@ module.exports = {
 		const nationalities = ["Australia", "Italy", "Greece", "New Zealand"];
 		const languages = ["English", "Italian", "Greek", "English"];
 		const religions = ["Christian", "Jewish", "Buddhist", "Muslim", "Hindu", "Atheist"];
-		const activities = ["bingo", "bustrips", "music", "gardening"];
+		const activityIds = [0, 1, 2, 3];
 		const practicing = [true, false];
 
 		const residents = uuidResidents.map((uuid, index) => {
@@ -32,13 +32,14 @@ module.exports = {
 		});
 
 		const residentsInfos = [];
+		const residentsActivities = [];
 
 		uuidResidents.forEach((uuid, index) => {
 			const random = Math.floor(Math.random() * 4);
 			const residentNatioality = nationalities[random];
 			const residentLanguage = languages[random];
 			const residentReligion = religions[Math.floor(Math.random() * 6)];
-			const residentActivity = activities[Math.floor(Math.random() * 4)];
+			const residentActivityId = activityIds[Math.floor(Math.random() * 4)];
 
 			const nationality = {
 				id: uuidv4(),
@@ -73,19 +74,21 @@ module.exports = {
 			const activity = {
 				id: uuidv4(),
 				residentId: uuid,
-				infoId: 4,
-				info: residentActivity,
+				activityId: residentActivityId,
 				createdAt,
 				updatedAt,
 			};
-			residentsInfos.push(activity);
+			residentsActivities.push(activity);
 		});
 
 		await queryInterface.bulkInsert("Residents", residents, {});
 		await queryInterface.bulkInsert("ResidentInfos", residentsInfos, {});
+		await queryInterface.bulkInsert("ResidentActivities", residentsActivities, {});
 	},
 
 	async down(queryInterface, Sequelize) {
-		return await queryInterface.bulkDelete("Residents");
+		await queryInterface.bulkDelete("Residents");
+		await queryInterface.bulkDelete("ResidentInfos");
+		await queryInterface.bulkDelete("ResidentActivities");
 	},
 };
