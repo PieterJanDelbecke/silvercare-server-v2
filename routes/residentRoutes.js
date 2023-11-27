@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const { Resident, ResidentInfo, ResidentActivity } = require("../models");
+const { Resident, ResidentInfo, ResidentActivity, Activity } = require("../models");
 const { residentData } = require("../lib/helpers.js");
 
 router.get("/residents", async (req, res) => {
@@ -26,9 +26,21 @@ router.get("/:residentId", async (req, res) => {
 				residentId,
 			},
 		});
+		const residentActivities = await ResidentActivity.findAll({
+			where: {
+				residentId,
+			},
+			attributes: ["activityId"],
+			include: [
+				{
+					model: Activity,
+					attributes: ["activity"],
+				},
+			],
+		});
 		const info = residentData(residentInfo);
 		logger.info(`GET residentInfo of resident: ${residentId}`);
-		res.json(info);
+		res.json({ info, residentActivities });
 	} catch (error) {
 		logger.error("resident/residents:", error);
 		res.send("ERROR: resident/residents");
@@ -36,7 +48,6 @@ router.get("/:residentId", async (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
-	// console.log("### req.body", req.body);
 	const { firstName, lastName, dob, gender, nationalities, languages, religions, practicingReligion, activityIds } =
 		req.body;
 
