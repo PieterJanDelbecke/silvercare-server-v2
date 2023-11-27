@@ -4,6 +4,7 @@ require("./env.js");
 
 const residentRoutes = require("./routes/residentRoutes");
 const staffRoutes = require("./routes/staffRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 const PORT = process.env.HTTP_PORT;
@@ -18,6 +19,7 @@ app.use(express.json());
 // Parse URL-encoded bodies
 app.use(express.urlencoded({ extended: true }));
 
+app.use("/admin", adminRoutes);
 app.use("/resident", residentRoutes);
 app.use("/staff", staffRoutes);
 

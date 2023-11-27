@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const { Resident, ResidentInfo } = require("../models");
+const { Resident, ResidentInfo, ResidentActivity, Activity } = require("../models");
 const { residentData } = require("../lib/helpers.js");
 
 router.get("/residents", async (req, res) => {
@@ -26,9 +26,21 @@ router.get("/:residentId", async (req, res) => {
 				residentId,
 			},
 		});
+		const residentActivities = await ResidentActivity.findAll({
+			where: {
+				residentId,
+			},
+			attributes: ["activityId"],
+			include: [
+				{
+					model: Activity,
+					attributes: ["activity"],
+				},
+			],
+		});
 		const info = residentData(residentInfo);
 		logger.info(`GET residentInfo of resident: ${residentId}`);
-		res.json(info);
+		res.json({ info, residentActivities });
 	} catch (error) {
 		logger.error("resident/residents:", error);
 		res.send("ERROR: resident/residents");
@@ -36,18 +48,8 @@ router.get("/:residentId", async (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
-	// console.log("### req.body", req.body);
-	const {
-		firstName,
-		lastName,
-		dob,
-		gender,
-		nationalities,
-		languages,
-		religions,
-		practicingReligion,
-		activitiesOptions,
-	} = req.body;
+	const { firstName, lastName, dob, gender, nationalities, languages, religions, practicingReligion, activityIds } =
+		req.body;
 
 	try {
 		const resident = await Resident.create({
@@ -68,13 +70,15 @@ router.post("/add", async (req, res) => {
 		const bulkReligions = religions.map((religion) => {
 			return { residentId, infoId: 3, info: religion };
 		});
-		const bulkAcivityOptions = activitiesOptions.map((activity) => {
-			return { residentId, infoId: 4, info: activity };
+
+		const bulkResidentInfo = [...bulkNationalities, ...bulkLanguages, ...bulkReligions];
+
+		const bulkAcivityOptions = activityIds.map((activityId) => {
+			return { residentId, activityId };
 		});
 
-		const info = [...bulkNationalities, ...bulkLanguages, ...bulkReligions, ...bulkAcivityOptions];
-
-		const insertedInfo = await ResidentInfo.bulkCreate(info);
+		const insertedInfo = await ResidentInfo.bulkCreate(bulkResidentInfo);
+		const insertedActivities = await ResidentActivity.bulkCreate(bulkAcivityOptions);
 
 		res.json(resident);
 		logger.info(`PUT new Resident: ${firstName} ${lastName} - residentId: ${resident.dataValues.id}`);
