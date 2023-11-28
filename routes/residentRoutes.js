@@ -48,8 +48,7 @@ router.get("/:residentId", async (req, res) => {
 });
 
 router.post("/add", async (req, res) => {
-	const { firstName, lastName, dob, gender, nationalities, languages, religions, practicingReligion, activityIds } =
-		req.body;
+	const { firstName, lastName, dob, gender, nationalities, languages, religions, practicingReligion } = req.body;
 
 	try {
 		const resident = await Resident.create({
@@ -73,12 +72,7 @@ router.post("/add", async (req, res) => {
 
 		const bulkResidentInfo = [...bulkNationalities, ...bulkLanguages, ...bulkReligions];
 
-		const bulkAcivityOptions = activityIds.map((activityId) => {
-			return { residentId, activityId };
-		});
-
 		const insertedInfo = await ResidentInfo.bulkCreate(bulkResidentInfo);
-		const insertedActivities = await ResidentActivity.bulkCreate(bulkAcivityOptions);
 
 		res.json(resident);
 		logger.info(`PUT new Resident: ${firstName} ${lastName} - residentId: ${resident.dataValues.id}`);
