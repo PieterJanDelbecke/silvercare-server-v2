@@ -81,6 +81,19 @@ router.post("/add", async (req, res) => {
 		res.send("ERROR: resident/add");
 	}
 });
+router.post("/addActivities", async (req, res) => {
+	const { residentId, activityIds } = req.body;
+	console.log("### residentId", residentId);
+	console.log("### activityIds", activityIds);
+
+	res.json({ status: 200, data: "OK" });
+
+	// try {
+	// } catch (error) {
+	// 	logger.error("resident/add:", error);
+	// 	res.send("ERROR: resident/add");
+	// }
+});
 
 router.put("/:residentId", (req, res) => {
 	const residentId = req.params.residentId;
