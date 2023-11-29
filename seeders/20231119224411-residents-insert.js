@@ -15,7 +15,10 @@ module.exports = {
 		const nationalities = ["Australia", "Italy", "Greece", "New Zealand"];
 		const languages = ["English", "Italian", "Greek", "English"];
 		const religions = ["Christian", "Jewish", "Buddhist", "Muslim", "Hindu", "Atheist"];
-		const activityIds = [0, 1, 2, 3];
+		const activityIds = [];
+		for (let i = 0; i < 40; i++) {
+			activityIds.push(i);
+		}
 		const practicing = [true, false];
 
 		const residents = uuidResidents.map((uuid, index) => {
@@ -39,7 +42,7 @@ module.exports = {
 			const residentNatioality = nationalities[random];
 			const residentLanguage = languages[random];
 			const residentReligion = religions[Math.floor(Math.random() * 6)];
-			const residentActivityId = activityIds[Math.floor(Math.random() * 4)];
+			const residentActivityId = activityIds[Math.floor(Math.random() * 40)];
 
 			const nationality = {
 				id: uuidv4(),
