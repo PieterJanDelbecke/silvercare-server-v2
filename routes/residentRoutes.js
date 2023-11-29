@@ -75,24 +75,27 @@ router.post("/add", async (req, res) => {
 		const insertedInfo = await ResidentInfo.bulkCreate(bulkResidentInfo);
 
 		res.json(resident);
-		logger.info(`PUT new Resident: ${firstName} ${lastName} - residentId: ${resident.dataValues.id}`);
+		logger.info(`POST new Resident: ${firstName} ${lastName} - residentId: ${resident.dataValues.id}`);
 	} catch (error) {
-		logger.error("resident/add:", error);
-		res.send("ERROR: resident/add");
+		logger.error("POST resident/add:", error);
+		res.send("ERROR: POST resident/add");
 	}
 });
 router.post("/addActivities", async (req, res) => {
 	const { residentId, activityIds } = req.body;
-	console.log("### residentId", residentId);
-	console.log("### activityIds", activityIds);
 
-	res.json({ status: 200, data: "OK" });
+	const bulkResidentActivities = activityIds.map((activityId) => {
+		return { residentId, activityId };
+	});
 
-	// try {
-	// } catch (error) {
-	// 	logger.error("resident/add:", error);
-	// 	res.send("ERROR: resident/add");
-	// }
+	try {
+		const insertedResidentActivities = await ResidentActivity.bulkCreate(bulkResidentActivities);
+		logger.info(`POST /resident/addActivities: residentId: ${residentId}`);
+		res.status(200).send("inserted");
+	} catch (error) {
+		console.error(error);
+		logger.error("POST resident/addActivities", error);
+	}
 });
 
 router.put("/:residentId", (req, res) => {
