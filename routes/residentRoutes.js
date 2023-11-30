@@ -12,13 +12,14 @@ router.get("/residents", async (req, res) => {
 		});
 		res.json(residents);
 	} catch (error) {
-		logger.error("resident/residents:", error);
+		logger.error("GET resident/residents:", error);
 		res.send("ERROR: resident/residents");
 	}
 });
 
-router.get("/:residentId", async (req, res) => {
-	const residentId = req.params.residentId;
+router.get("/resident", async (req, res) => {
+	const residentId = req.query.residentId;
+	console.log("=> 2 ### residentId: ", residentId);
 
 	try {
 		const residentInfo = await ResidentInfo.findAll({
@@ -42,7 +43,7 @@ router.get("/:residentId", async (req, res) => {
 		logger.info(`GET residentInfo of resident: ${residentId}`);
 		res.json({ info, residentActivities });
 	} catch (error) {
-		logger.error("resident/residents:", error);
+		logger.error("GET resident/:residentId", error);
 		res.send("ERROR: resident/residents");
 	}
 });
@@ -98,16 +99,22 @@ router.post("/addActivities", async (req, res) => {
 	}
 });
 
-router.put("/:residentId", (req, res) => {
-	const residentId = req.params.residentId;
-	// Handle updating resident details
-	res.send(`Update details of resident ${residentId}`);
-});
+router.get("/residentActivities", async (req, res) => {
+	const residentId = req.query.residentId;
 
-router.delete("/:residentId", (req, res) => {
-	const residentId = req.params.residentId;
-	// Handle deleting a resident
-	res.send(`Delete resident ${residentId}`);
+	try {
+		const result = await ResidentActivity.findAll({
+			where: {
+				residentId,
+			},
+		});
+		console.log("### result: ", result);
+		logger.info(`GET resident/residentActivities - residentId; ${residentId} `, result);
+		res.json(result);
+	} catch (error) {
+		console.error(error);
+		logger.error("GET resident/residentActivities", error);
+	}
 });
 
 module.exports = router;
