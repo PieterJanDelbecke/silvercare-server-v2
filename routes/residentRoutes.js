@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const { Resident, ResidentInfo, ResidentActivity, Activity } = require("../models");
+const { QueryTypes } = require("sequelize");
+const { Resident, ResidentInfo, ResidentActivity, Activity, sequelize } = require("../models");
 const { residentData } = require("../lib/helpers.js");
 
 router.get("/residents", async (req, res) => {
@@ -94,8 +95,8 @@ router.post("/addActivities", async (req, res) => {
 		logger.info(`POST /resident/addActivities: residentId: ${residentId}`);
 		res.status(200).send("inserted");
 	} catch (error) {
-		console.error(error);
 		logger.error("POST resident/addActivities", error);
+		res.status(400).send("ERROR");
 	}
 });
 
@@ -103,17 +104,32 @@ router.get("/residentActivities", async (req, res) => {
 	const residentId = req.query.residentId;
 
 	try {
-		const result = await ResidentActivity.findAll({
+		const residentActivities = await ResidentActivity.findAll({
 			where: {
 				residentId,
 			},
 		});
-		console.log("### result: ", result);
-		logger.info(`GET resident/residentActivities - residentId; ${residentId} `, result);
-		res.json(result);
+		const activities = await Activity.findAll({
+			where: {
+				removed: false,
+			},
+		});
+
+		const updatedResidentActivities = [];
+		activities.forEach((activity) => {
+			const result = residentActivities.find((residentActivity) => residentActivity.activityId === activity.id);
+			updatedResidentActivities.push({
+				id: activity.id,
+				name: activity.activity,
+				selected: result ? true : false,
+			});
+		});
+
+		logger.info(`GET resident/residentActivities - residentId: ${residentId}`);
+		res.json(updatedResidentActivities);
 	} catch (error) {
-		console.error(error);
-		logger.error("GET resident/residentActivities", error);
+		logger.error(`GET resident/residentActivities - residentId: ${residentId}`, error);
+		res.status(400).send("ERROR");
 	}
 });
 
