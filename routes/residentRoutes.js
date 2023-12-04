@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const { Resident, ResidentInfo, ResidentActivity, Activity } = require("../models");
+const { QueryTypes } = require("sequelize");
+const { Resident, ResidentInfo, ResidentActivity, Activity, sequelize } = require("../models");
 const { residentData } = require("../lib/helpers.js");
 
 router.get("/residents", async (req, res) => {
@@ -12,13 +13,13 @@ router.get("/residents", async (req, res) => {
 		});
 		res.json(residents);
 	} catch (error) {
-		logger.error("resident/residents:", error);
+		logger.error("GET resident/residents:", error);
 		res.send("ERROR: resident/residents");
 	}
 });
 
-router.get("/:residentId", async (req, res) => {
-	const residentId = req.params.residentId;
+router.get("/resident", async (req, res) => {
+	const residentId = req.query.residentId;
 
 	try {
 		const residentInfo = await ResidentInfo.findAll({
@@ -38,11 +39,36 @@ router.get("/:residentId", async (req, res) => {
 				},
 			],
 		});
+		const activities = await Activity.findAll({
+			where: {
+				removed: false,
+			},
+		});
+
+		const updatedResidentActivities = [];
+		activities.forEach((activity) => {
+			const result = residentActivities.find((residentActivity) => residentActivity.activityId === activity.id);
+			updatedResidentActivities.push({
+				id: activity.id,
+				name: activity.activity,
+				selected: result ? true : false,
+			});
+		});
+		const initialValues = [];
+		updatedResidentActivities.forEach((residentActivity, index) => {
+			if (residentActivity.selected) initialValues.push(index.toString());
+		});
+
 		const info = residentData(residentInfo);
 		logger.info(`GET residentInfo of resident: ${residentId}`);
-		res.json({ info, residentActivities });
+		res.json({
+			info,
+			residentActivities,
+			editResidentActivities: updatedResidentActivities,
+			editActivitiesInitialValues: initialValues,
+		});
 	} catch (error) {
-		logger.error("resident/residents:", error);
+		logger.error("GET resident/:residentId", error);
 		res.send("ERROR: resident/residents");
 	}
 });
@@ -81,6 +107,7 @@ router.post("/add", async (req, res) => {
 		res.send("ERROR: POST resident/add");
 	}
 });
+
 router.post("/addActivities", async (req, res) => {
 	const { residentId, activityIds } = req.body;
 
@@ -93,21 +120,64 @@ router.post("/addActivities", async (req, res) => {
 		logger.info(`POST /resident/addActivities: residentId: ${residentId}`);
 		res.status(200).send("inserted");
 	} catch (error) {
-		console.error(error);
 		logger.error("POST resident/addActivities", error);
+		res.status(400).send("ERROR");
 	}
 });
 
-router.put("/:residentId", (req, res) => {
-	const residentId = req.params.residentId;
-	// Handle updating resident details
-	res.send(`Update details of resident ${residentId}`);
+router.post("/editActivities", async (req, res) => {
+	const { editedResidentActivities } = req.body;
+	const residentId = editedResidentActivities[0].residentId;
+
+	try {
+		const deletedResidentActivities = await ResidentActivity.destroy({
+			where: {
+				residentId,
+			},
+		});
+		const updatedResidentActivities = await ResidentActivity.bulkCreate(editedResidentActivities);
+		logger.info(`POST /resident/editActivities: residentId: ${residentId}`);
+		res.status(200).send("edited");
+	} catch (error) {
+		logger.error("POST resident/editActivities", error);
+		res.status(400).send("ERROR");
+	}
 });
 
-router.delete("/:residentId", (req, res) => {
-	const residentId = req.params.residentId;
-	// Handle deleting a resident
-	res.send(`Delete resident ${residentId}`);
+router.get("/residentActivities", async (req, res) => {
+	const residentId = req.query.residentId;
+
+	try {
+		const residentActivities = await ResidentActivity.findAll({
+			where: {
+				residentId,
+			},
+		});
+		const activities = await Activity.findAll({
+			where: {
+				removed: false,
+			},
+		});
+
+		const updatedResidentActivities = [];
+		activities.forEach((activity) => {
+			const result = residentActivities.find((residentActivity) => residentActivity.activityId === activity.id);
+			updatedResidentActivities.push({
+				id: activity.id,
+				name: activity.activity,
+				selected: result ? true : false,
+			});
+		});
+		const initialValues = [];
+		updatedResidentActivities.forEach((residentActivity, index) => {
+			if (residentActivity.selected) initialValues.push(index.toString());
+		});
+		logger.info(`GET resident/residentActivities - residentId: ${residentId}`);
+		res.json({ updatedResidentActivities, initialValuesActivityOptions: initialValues });
+	} catch (error) {
+		logger.error(`GET resident/residentActivities - residentId: ${residentId}`, error);
+		res.status(400).send("ERROR");
+	}
 });
 
 module.exports = router;
