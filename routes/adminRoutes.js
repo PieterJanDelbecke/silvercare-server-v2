@@ -4,6 +4,13 @@ const logger = require("../lib/logger");
 
 const { Activity, Resident } = require("../models");
 
+const team = [
+	{ value: 0, label: "Alessandra Salso" },
+	{ value: 1, label: "Michael Diaz" },
+	{ value: 2, label: "JD" },
+	{ value: 3, label: "Andrea Goodsoul" },
+];
+
 router.get("/firstload", async (req, res) => {
 	try {
 		const residents = await Resident.findAll({
@@ -12,7 +19,7 @@ router.get("/firstload", async (req, res) => {
 		const activities = await Activity.findAll({
 			attributes: ["id", "activity", "removed"],
 		});
-		res.json({ residents, activities });
+		res.json({ residents, activities, team });
 	} catch (error) {
 		logger.error("admin/firstload:", error);
 		res.send("Error: resident/residents");
