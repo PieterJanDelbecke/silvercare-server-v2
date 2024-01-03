@@ -100,6 +100,8 @@ router.post("/add", async (req, res) => {
 
 		const insertedInfo = await ResidentInfo.bulkCreate(bulkResidentInfo);
 
+		//TODO: update resident to { id, firstName, lastName, dob, gender }
+
 		res.json(resident);
 		logger.info(`POST new Resident: ${firstName} ${lastName} - residentId: ${resident.dataValues.id}`);
 	} catch (error) {
