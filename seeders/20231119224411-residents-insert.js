@@ -15,7 +15,6 @@ module.exports = {
 		const nationalities = ["Australia", "Italy", "Greece", "New Zealand"];
 		const languages = ["English", "Italian", "Greek", "English"];
 		const religions = ["Christian", "Jewish", "Buddhist", "Muslim", "Hindu", "Atheist"];
-		const practicing = [true, false];
 
 		const residents = uuidResidents.map((uuid, index) => {
 			return {
@@ -24,7 +23,7 @@ module.exports = {
 				lastName: faker.person.lastName(),
 				dob: faker.date.birthdate(),
 				gender: faker.person.sexType(),
-				practicingReligion: practicing[Math.floor(Math.random() * 2)],
+				practicingReligion: Math.floor(Math.random() * 2) ? true : false,
 				createdAt,
 				updatedAt,
 			};
