@@ -23,8 +23,7 @@ module.exports = (sequelize, DataTypes) => {
 	OrganisedActivityAttendence.init(
 		{
 			organisedActivityId: DataTypes.UUID,
-			personType: DataTypes.STRING,
-			personId: DataTypes.UUID,
+			residentId: DataTypes.UUID,
 		},
 		{
 			sequelize,
