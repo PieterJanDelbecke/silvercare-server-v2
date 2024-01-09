@@ -2,14 +2,7 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const { Activity, Resident } = require("../models");
-
-const team = [
-	{ value: 0, label: "Alessandra Salso" },
-	{ value: 1, label: "Michael Diaz" },
-	{ value: 2, label: "JD" },
-	{ value: 3, label: "Andrea Goodsoul" },
-];
+const { Activity, Resident, TeamMember } = require("../models");
 
 router.get("/firstload", async (req, res) => {
 	try {
@@ -19,7 +12,11 @@ router.get("/firstload", async (req, res) => {
 		const activities = await Activity.findAll({
 			attributes: ["id", "activity", "removed"],
 		});
-		res.json({ residents, activities, team });
+		const teamMembers = await TeamMember.findAll({
+			attributes: ["id", "firstName", "lastName", "admin", "role"],
+		});
+		console.log("teamMembers: ", teamMembers);
+		res.json({ residents, activities, teamMembers });
 	} catch (error) {
 		logger.error("admin/firstload:", error);
 		res.send("Error: resident/residents");
