@@ -33,7 +33,6 @@ router.post("/new", async (req, res) => {
 });
 
 router.get("/organisedActivity", async (req, res) => {
-	console.log("### organisedActivityId:", req.query.organisedActivityId);
 	const id = req.query.organisedActivityId;
 
 	try {
@@ -48,7 +47,7 @@ router.get("/organisedActivity", async (req, res) => {
 					include: [
 						{
 							model: Resident,
-							attributes: ["id", "firstName", "lastName"],
+							attributes: ["id", "firstName", "lastName", "dob", "gender"],
 						},
 					],
 				},
@@ -58,8 +57,6 @@ router.get("/organisedActivity", async (req, res) => {
 				},
 			],
 		});
-
-		console.log("### result", result);
 		res.json(result);
 	} catch (error) {
 		logger.error("GET activity/organisedActivity", error);
