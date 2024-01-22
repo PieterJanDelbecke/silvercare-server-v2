@@ -1,6 +1,6 @@
 "use strict";
 
-const { Resident, TeamMember, ResidentInfo, ResidentActivity, Activity, sequelize } = require("../models");
+const { TeamMember } = require("../models");
 
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
