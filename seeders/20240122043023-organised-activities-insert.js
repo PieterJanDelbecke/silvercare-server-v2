@@ -14,7 +14,7 @@ module.exports = {
 			{
 				activityId: 0,
 				teamMemberId: teamMembers[0].id,
-				date: "01/01/224",
+				date: "01/01/2024",
 				comment: "great team play",
 				createdAt,
 				updatedAt,
@@ -22,7 +22,7 @@ module.exports = {
 			{
 				activityId: 1,
 				teamMemberId: teamMembers[1].id,
-				date: "01/01/224",
+				date: "01/02/2024",
 				comment: "Manly Dam",
 				createdAt,
 				updatedAt,
@@ -30,7 +30,7 @@ module.exports = {
 			{
 				activityId: 2,
 				teamMemberId: teamMembers[2].id,
-				date: "01/01/224",
+				date: "01/03/2024",
 				comment: "painting of murals",
 				createdAt,
 				updatedAt,
@@ -38,7 +38,7 @@ module.exports = {
 			{
 				activityId: 3,
 				teamMemberId: teamMembers[3].id,
-				date: "01/01/224",
+				date: "01/04/2024",
 				comment: "discussing the news",
 				createdAt,
 				updatedAt,
@@ -46,7 +46,7 @@ module.exports = {
 			{
 				activityId: 4,
 				teamMemberId: teamMembers[4].id,
-				date: "01/01/224",
+				date: "01/05/2024",
 				comment: "yin yoga",
 				createdAt,
 				updatedAt,
@@ -54,7 +54,7 @@ module.exports = {
 			{
 				activityId: 5,
 				teamMemberId: teamMembers[5].id,
-				date: "01/01/224",
+				date: "01/06/2024",
 				comment: "salsa",
 				createdAt,
 				updatedAt,
