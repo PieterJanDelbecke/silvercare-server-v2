@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const { Activity, Resident, TeamMember, OrganisedActivity } = require("../models");
+const { Activity, Resident, TeamMember, OrganisedActivity, OrganisedActivityAttendence } = require("../models");
 
 router.get("/firstload", async (req, res) => {
 	try {
@@ -15,7 +15,7 @@ router.get("/firstload", async (req, res) => {
 		const teamMembers = await TeamMember.findAll({
 			attributes: ["id", "firstName", "lastName", "admin", "role"],
 		});
-		const lastOrganisedActivities = await OrganisedActivity.findAll({
+		const lastFiveOrganisedActivities = await OrganisedActivity.findAll({
 			order: [["date", "DESC"]],
 			limit: 5,
 			attributes: ["id", "activityId", "teamMemberId", "date"],
@@ -24,10 +24,25 @@ router.get("/firstload", async (req, res) => {
 					model: Activity,
 					attributes: ["activity"],
 				},
+				{
+					model: OrganisedActivityAttendence,
+					attributes: ["id"],
+				},
 			],
 		});
 
-		res.json({ residents, activities, teamMembers, lastOrganisedActivities });
+		const result = lastFiveOrganisedActivities.map((activity) => {
+			return {
+				activityName: activity.Activity.activity,
+				id: activity.id,
+				date: activity.date,
+				residentCount: activity.OrganisedActivityAttendences.length,
+			};
+		});
+
+		console.log("### result", result);
+
+		res.json({ residents, activities, teamMembers, lastOrganisedActivities: result });
 	} catch (error) {
 		logger.error("admin/firstload:", error);
 		res.send("Error: resident/residents");
