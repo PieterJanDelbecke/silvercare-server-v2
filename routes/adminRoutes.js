@@ -2,7 +2,14 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const { Activity, Resident, TeamMember } = require("../models");
+const {
+	Activity,
+	Resident,
+	TeamMember,
+	OrganisedActivity,
+	OrganisedActivityAttendence,
+	sequelize,
+} = require("../models");
 
 router.get("/firstload", async (req, res) => {
 	try {
@@ -15,8 +22,32 @@ router.get("/firstload", async (req, res) => {
 		const teamMembers = await TeamMember.findAll({
 			attributes: ["id", "firstName", "lastName", "admin", "role"],
 		});
-		console.log("teamMembers: ", teamMembers);
-		res.json({ residents, activities, teamMembers });
+		const lastFiveOrganisedActivities = await OrganisedActivity.findAll({
+			order: [["date", "DESC"]],
+			limit: 5,
+			attributes: ["id", "activityId", "teamMemberId", "date"],
+			include: [
+				{
+					model: Activity,
+					attributes: ["activity"],
+				},
+				{
+					model: OrganisedActivityAttendence,
+					attributes: ["id"],
+				},
+			],
+		});
+
+		const result = lastFiveOrganisedActivities.map((activity) => {
+			return {
+				activityId: activity.id,
+				activityName: activity.Activity.activity,
+				date: activity.date,
+				residentCount: activity.OrganisedActivityAttendences.length,
+			};
+		});
+
+		res.json({ residents, activities, teamMembers, lastOrganisedActivities: result });
 	} catch (error) {
 		logger.error("admin/firstload:", error);
 		res.send("Error: resident/residents");
