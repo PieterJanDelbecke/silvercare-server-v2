@@ -2,7 +2,14 @@ const express = require("express");
 const router = express.Router();
 const logger = require("../lib/logger");
 
-const { Activity, Resident, TeamMember, OrganisedActivity, OrganisedActivityAttendence } = require("../models");
+const {
+	Activity,
+	Resident,
+	TeamMember,
+	OrganisedActivity,
+	OrganisedActivityAttendence,
+	sequelize,
+} = require("../models");
 
 router.get("/firstload", async (req, res) => {
 	try {
@@ -33,14 +40,12 @@ router.get("/firstload", async (req, res) => {
 
 		const result = lastFiveOrganisedActivities.map((activity) => {
 			return {
+				activityId: activity.id,
 				activityName: activity.Activity.activity,
-				id: activity.id,
 				date: activity.date,
 				residentCount: activity.OrganisedActivityAttendences.length,
 			};
 		});
-
-		console.log("### result", result);
 
 		res.json({ residents, activities, teamMembers, lastOrganisedActivities: result });
 	} catch (error) {
