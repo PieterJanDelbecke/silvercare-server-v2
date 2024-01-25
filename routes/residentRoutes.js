@@ -182,7 +182,7 @@ router.get("/residentActivities", async (req, res) => {
 	}
 });
 
-router.get("/pieChartData", async (req, res) => {
+router.get("/attendenceData", async (req, res) => {
 	try {
 		const randomGenerator = (number) => {
 			return Math.floor(Math.random() * number + 1);
